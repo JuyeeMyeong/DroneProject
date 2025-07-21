@@ -23,10 +23,10 @@ UDroneMovementComponent::UDroneMovementComponent()
 	Mass = 1.0f;
 	MaxThrustForce = 1500.0f;
 	MaxVerticalThrust = 2000.0f;
-	DragCoefficient = 0.2f;
-	DampingSpeed = 2.0f;
-	MaxSpeed = 2000.0f;
-	AirControlFactor = 0.3f;
+	DragCoefficient = 0.5f;
+	DampingSpeed = 7.0f;
+	MaxSpeed = 2500.0f;
+	AirControlFactor = 0.5f;
 	GroundCheckDistance = 100.0f;
 
 	bIsOnGround = false;
@@ -42,6 +42,11 @@ void UDroneMovementComponent::BeginPlay()
 void UDroneMovementComponent::AddInputVector(const FVector& Input)
 {
 	MovementInput = Input;
+}
+
+void UDroneMovementComponent::SetVelocityForDuration()
+{
+	Velocity *= 0.1f;
 }
 
 FVector UDroneMovementComponent::PerformGroundCheck()

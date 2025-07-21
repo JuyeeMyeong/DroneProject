@@ -24,6 +24,8 @@ public:
 
 	FVector GetVelocity() const { return Velocity; }
 
+	void SetVelocityForDuration();
+
 protected:
 	FVector Velocity;
 	FVector Acceleration;
@@ -62,6 +64,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ground Check")
 	float GroundCheckDistance;
 
+private:
 	bool bIsOnGround;
 
 	FVector PerformGroundCheck();

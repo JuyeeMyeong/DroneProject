@@ -7,6 +7,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "DroneMovementComponent.h"
+#include "HealthComponent.h"
+#include "ScoreComponent.h"
 #include "DroneController.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -40,7 +42,10 @@ ADronePlayer::ADronePlayer()
 	DroneMovementComponent = CreateDefaultSubobject<UDroneMovementComponent>(TEXT("DroneMovementComponent"));
 	DroneMovementComponent->UpdatedComponent = CollisionComponent;
 
-	RollSpeed = 60.0f;
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	ScoreComponent = CreateDefaultSubobject<UScoreComponent>(TEXT("ScoreComponent"));
+
+	RollSpeed = 100.0f;
 }
 
 // Called when the game starts or when spawned
@@ -91,6 +96,12 @@ void ADronePlayer::Move(const FInputActionValue& Value)
 	if (!Controller) return;
 
 	FVector Input = Value.Get<FVector>();
+
+	if (bIsInverted)
+	{
+		Input *= -1.0f;
+	}
+
 	DroneMovementComponent->AddInputVector(Input);
 }
 
@@ -99,7 +110,7 @@ void ADronePlayer::Look(const FInputActionValue& Value)
 	FVector2D Input = Value.Get<FVector2D>();
 	if (Input.IsNearlyZero()) return;
 
-	FRotator LookRotation(Input.Y, Input.X, 0.f); // Pitch, Yaw
+	FRotator LookRotation(Input.Y, Input.X, 0.f);
 	AddActorLocalRotation(FQuat(LookRotation));
 
 	SpringArmComponent->SetWorldRotation(GetActorRotation());
@@ -112,4 +123,19 @@ void ADronePlayer::Roll(const FInputActionValue& Value)
 
 	FRotator RollDelta(0.f, 0.f, Input * RollSpeed * GetWorld()->GetDeltaSeconds());
 	AddActorLocalRotation(FQuat(RollDelta));
+}
+
+void ADronePlayer::InvertControls(float Duration)
+{
+	bIsInverted = true;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		PlayerTimer,
+		FTimerDelegate::CreateLambda([this]()
+			{
+				bIsInverted = false;
+			}),
+		Duration,
+		false
+	);
 }

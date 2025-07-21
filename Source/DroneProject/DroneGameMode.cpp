@@ -2,6 +2,7 @@
 
 
 #include "DroneGameMode.h"
+#include "WaveManagerComponent.h"
 #include "DronePlayer.h"
 #include "DroneController.h"
 

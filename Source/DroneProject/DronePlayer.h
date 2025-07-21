@@ -13,6 +13,8 @@ class UInputComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class UDroneMovementComponent;
+class UHealthComponent;
+class UScoreComponent;
 struct FInputActionValue;
 
 UCLASS()
@@ -44,7 +46,17 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom Movement", meta = (AllowPrivateAccess = "true"))
 	UDroneMovementComponent* DroneMovementComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Health", meta = (AllowPrivateAccess = "true"))
+	UHealthComponent* HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Score", meta = (AllowPrivateAccess = "true"))
+	UScoreComponent* ScoreComponent;
+
 	float RollSpeed;
+
+	bool bIsInverted = false;
+
+	FTimerHandle PlayerTimer;
 
 protected:
 	UFUNCTION()
@@ -53,4 +65,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 	UFUNCTION()
 	void Roll(const FInputActionValue& Value);
+
+public:
+	void InvertControls(float Duration);
 };

@@ -6,6 +6,8 @@
 #include "GameFramework/GameMode.h"
 #include "DroneGameMode.generated.h"
 
+class UWaveManagerComponent;
+
 UCLASS()
 class DRONEPROJECT_API ADroneGameMode : public AGameMode
 {
