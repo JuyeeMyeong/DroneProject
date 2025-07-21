@@ -43,6 +43,9 @@ struct FItemData : public FTableRowBase
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     float SizeScalar;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (MultiLine = "true"))
+    FText Description;
 };
 
 //--- Configs for Wave ---//

@@ -17,6 +17,8 @@ class UHealthComponent;
 class UScoreComponent;
 struct FInputActionValue;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnItemUsed, UTexture2D*, Icon, float, Duration, FText, Description);
+
 UCLASS()
 class DRONEPROJECT_API ADronePlayer : public APawn
 {
@@ -25,6 +27,9 @@ class DRONEPROJECT_API ADronePlayer : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ADronePlayer();
+
+	UPROPERTY(BlueprintAssignable, Category = "Item")
+	FOnItemUsed OnItemUsed;
 
 protected:
 	virtual void BeginPlay() override;

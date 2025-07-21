@@ -86,5 +86,10 @@ void ABaseItem::ActivateEffect(ADronePlayer* Player)
         Player->InvertControls(ItemData.Duration);
     }
 
+    if (ItemData.Icon && ItemData.Duration > 0.f)
+    {
+        Player->OnItemUsed.Broadcast(ItemData.Icon, ItemData.Duration, ItemData.Description);
+    }
+
     Destroy();
 }
