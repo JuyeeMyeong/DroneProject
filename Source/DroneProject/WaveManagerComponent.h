@@ -59,4 +59,6 @@ private:
     bool IsWaveActive() const;
     ASpawnVolume* GetRandomVolume() const;
     const FItemData* GetRandomItemData(const TArray<FName>& RowNames) const;
+
+    void PlayerNarrowSight();
 };

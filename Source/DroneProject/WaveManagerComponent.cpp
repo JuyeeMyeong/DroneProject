@@ -3,6 +3,8 @@
 #include "WaveManagerComponent.h"
 #include "SpawnVolume.h"
 #include "BaseItem.h"
+#include "DronePlayer.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Engine/World.h"
 #include "Engine/DataTable.h"
 #include "Kismet/GameplayStatics.h"
@@ -79,6 +81,12 @@ void UWaveManagerComponent::StartWave(int32 WaveIndex)
     WaveElapsedTime = 0.f;
     SpawnTimer = 0.f;
     OnWaveStarted.Broadcast(WaveIndex, WaveConfigs[WaveIndex - 1].TimeLimit);
+    OnWaveStarted.Broadcast(WaveIndex, WaveConfigs[WaveIndex - 1].TimeLimit);
+
+    if (WaveIndex == 3)
+    {
+        PlayerNarrowSight();
+    }
 
     FString Message = FString::Printf(TEXT("Wave %d START!"), WaveIndex);
     UE_LOG(LogTemp, Log, TEXT("%s"), *Message);
@@ -134,6 +142,19 @@ void UWaveManagerComponent::TrySpawnItems()
     const TArray<FName> RowNames = ItemDataTable->GetRowNames();
     if (RowNames.Num() == 0) return;
 
+    TArray<FName> ValidRowNames;
+    ValidRowNames.Reserve(RowNames.Num());
+
+    for (const FName& RowName : RowNames)
+    {
+        const FItemData* Data = ItemDataTable->FindRow<FItemData>(RowName, TEXT("TrySpawnItems"));
+        if (!Data) continue;
+        if (CurrentWaveIndex < 2 && Data->ItemID == FName("Lightning")) continue;
+        ValidRowNames.Add(RowName);
+    }
+
+    if (ValidRowNames.IsEmpty()) return;
+
     for (const FSpawnCount& SC : Config.SpawnCounts)
     {
         if (SC.Count <= 0 || !*SC.ItemClass) continue;
@@ -141,8 +162,9 @@ void UWaveManagerComponent::TrySpawnItems()
         for (int32 i = 0; i < SC.Count; ++i)
         {
             if (ASpawnVolume* Volume = GetRandomVolume())
-                if (const FItemData* InitData = GetRandomItemData(RowNames))
+                if (const FItemData* InitData = GetRandomItemData(ValidRowNames))
                 {
+
                     UClass* Raw = SC.ItemClass.Get();
                     if (Raw && Raw->IsChildOf(ABaseItem::StaticClass()))
                     {
@@ -181,6 +203,20 @@ const FItemData* UWaveManagerComponent::GetRandomItemData(const TArray<FName>& R
 
     int32 Idx = FMath::RandRange(0, RowNames.Num() - 1);
     return ItemDataTable->FindRow<FItemData>(RowNames[Idx], TEXT("TrySpawnItems"));
+}
+
+void UWaveManagerComponent::PlayerNarrowSight()
+{
+    if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+    {
+        if (ADronePlayer* Drone = Cast<ADronePlayer>(PC->GetPawn()))
+        {
+            if (USpringArmComponent* Boom = Drone->FindComponentByClass<USpringArmComponent>())
+            {
+                Boom->TargetArmLength = 150.0f;
+            }
+        }
+    }
 }
 
 

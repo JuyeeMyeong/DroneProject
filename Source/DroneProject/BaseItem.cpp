@@ -60,30 +60,38 @@ void ABaseItem::ActivateEffect(ADronePlayer* Player)
             HealthComp->Heal(1.0f);
         }
     }
-    else if (ItemData.ItemID == "Bomb")
+    if (ItemData.ItemID == "Bomb")
     {
         if (UHealthComponent* HealthComp = Player->FindComponentByClass<UHealthComponent>())
         {
             HealthComp->ApplyDamage(1.0f);
         }
     }
-    else if (ItemData.ItemID == "ScoreCoin")
+    if (ItemData.ItemID == "ScoreCoin")
     {
         if (UScoreComponent* ScoreComp = Player->FindComponentByClass<UScoreComponent>())
         {
             ScoreComp->AddScore(1);
         }
     }
-    else if (ItemData.ItemID == "Slow")
+    if (ItemData.ItemID == "Slow")
     {
         if (UDroneMovementComponent* MoveComp = Player->FindComponentByClass<UDroneMovementComponent>())
         {
             MoveComp->SetVelocityForDuration();
         }
     }
-    else if (ItemData.ItemID == "InvertControl")
+    if (ItemData.ItemID == "InvertControl")
     {
         Player->InvertControls(ItemData.Duration);
+    }
+
+    if (ItemData.ItemID == "Lightning")
+    {
+        if (UHealthComponent* HealthComp = Player->FindComponentByClass<UHealthComponent>())
+        {
+            HealthComp->ApplyDamage(5.0f);
+        }
     }
 
     if (ItemData.Icon && ItemData.Duration > 0.f)
